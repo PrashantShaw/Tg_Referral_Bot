@@ -3,11 +3,28 @@ import express from 'express';
 import userMetaRouter from './routes/userMeta'
 import { getBot } from './utils/helpers';
 import { initBot } from './bot/initBot';
+import { createClient, RedisClientType } from 'redis';
+import { PrismaClient } from '@prisma/client';
 
 const port = 3000;
 const app = express();
-const bot = getBot()
+
+const prisma = new PrismaClient()
+// const bot = getBot()
 // const webhookDomain = 'http://localhost:443/'
+let redisClient: RedisClientType;
+const REDIS_URL = process.env.REDIS_URL || '';
+
+(async () => {
+    redisClient = createClient({
+        url: REDIS_URL
+    });
+
+    redisClient.on("error", (error) => console.error(`Error : ${error}`));
+
+    await redisClient.connect();
+})();
+
 initBot();
 
 app.use(express.json());
@@ -21,8 +38,9 @@ app.get('/', (req, res) => {
     res.send("All Ok.")
 })
 
-app.listen(port, () => {
+
+app.listen(port, async () => {
     console.log('Server is running on port', port);
 });
 
-export default app;
+export { app, redisClient, prisma };

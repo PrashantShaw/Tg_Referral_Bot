@@ -2,6 +2,8 @@ import 'dotenv/config'
 import { Context, Markup } from 'telegraf';
 import { message } from 'telegraf/filters';
 import { Coin, coins, fetchCryptoPrice, getBot } from '../utils/helpers';
+import { prisma, redisClient } from "../index"
+import { Prisma } from '@prisma/client';
 
 const MINI_APP_DEPLOYMENT_URL = process.env.MINI_APP_DEPLOYMENT_URL || ''
 const CHAT_ID = process.env.CHAT_ID || ''
@@ -11,21 +13,37 @@ const VALIDIUM_DOCS_URL = 'https://www.validium.network/developers/docs'
 const VALIDIUM_WHITE_PAPER_URL = 'https://docsend.com/view/5c85m6dfy3v4rren'
 
 const bot = getBot()
+const REFERRAL_POINTS = 5;
+type User = Prisma.$UserPayload['scalars']
 
 // TODO: In-memory storage for referral links (in production, use a database)
 // TODO: add a leaderboard points system for referrals.
 // TODO: refactor this file
 
-const userReferralLinks: Record<number, string> = {};
-const newUserPendingJoinRequests: Record<number, string> = {};
+// const userReferralLinks: Record<number, string> = {};
+// const newUserPendingJoinRequests: Record<number, string> = {};
 
 async function generateReferralLink(ctx: Context): Promise<string> {
     const referrer = ctx.from
-    const prevInviteLink = userReferralLinks[referrer?.id!]
+    const referralLinkKey = `referral_link_${referrer?.id}`
+    const prevInviteLink = await redisClient.get(referralLinkKey)
+    // const prevInviteLink = userReferralLinks[referrer?.id!]
 
     if (prevInviteLink) {
         return prevInviteLink;
     }
+
+    // add the member to db if does not exist
+    const newUser = await prisma.user.create({
+        data: {
+            telegramId: referrer?.id!,
+            firstName: referrer?.first_name,
+            lastName: referrer?.last_name,
+            username: referrer?.username,
+        }
+    })
+
+    console.log('Created new user: ', newUser)
 
     const referrerStr = `Referrer_${referrer?.id}_${referrer?.first_name}`
     const chatInviteLink = await ctx.telegram.createChatInviteLink(CHAT_ID, {
@@ -34,8 +52,11 @@ async function generateReferralLink(ctx: Context): Promise<string> {
     });
     const inviteLink = chatInviteLink.invite_link;
     // const link = await ctx.exportChatInviteLink();
-    userReferralLinks[referrer?.id!] = inviteLink;
-    console.log('userReferralLinks ::', userReferralLinks)
+    await redisClient.set(referralLinkKey, inviteLink, {
+        'EX': 604800 // expire after 7 days (in seconds)
+    })
+    // userReferralLinks[referrer?.id!] = inviteLink;
+    // console.log('userReferralLinks ::', userReferralLinks)
 
     return inviteLink;
 }
@@ -195,8 +216,34 @@ ${referralLink}
         const joinRequest = ctx.chatJoinRequest;
         const referrerStr = joinRequest.invite_link?.name!
 
-        newUserPendingJoinRequests[joinRequest.from.id] = referrerStr
+        // Approve the join request
         await ctx.approveChatJoinRequest(joinRequest.from.id);
+
+        // Provide points to referrer
+        if (referrerStr) {
+            const [_, referrerId, referrerFirstName] = referrerStr?.split('_')
+            const updateUser = await prisma.user.update({
+                where: {
+                    telegramId: Number(referrerId)
+                },
+                data: {
+                    points: {
+                        increment: REFERRAL_POINTS,
+                    },
+                    referrals: {
+                        push: joinRequest.from.id
+                    }
+                }
+            })
+
+            console.log('User updated ::', updateUser)
+        }
+
+        const newMemberJoinKey = `new_member_${joinRequest.from.id}`
+        await redisClient.set(newMemberJoinKey, referrerStr, {
+            'EX': 60,
+        });
+        // newUserPendingJoinRequests[joinRequest.from.id] = referrerStr
     });
 
     bot.on(message('new_chat_members'), async (ctx) => {
@@ -205,7 +252,9 @@ ${referralLink}
         console.log('newMembers ::', newMembers)
 
         for (const member of newMembers) {
-            const referrerStr = newUserPendingJoinRequests[member.id];
+            const newMemberJoinKey = `new_member_${member.id}`
+            const referrerStr = await redisClient.get(newMemberJoinKey)
+            // const referrerStr = newUserPendingJoinRequests[member.id];
             const memberFullName = `${member.first_name}${member.last_name ? ' ' + member.last_name : ''}`
             if (referrerStr) {
                 const [_, referrerId, referrerFirstName] = referrerStr?.split('_')
@@ -215,7 +264,8 @@ ${referralLink}
 You have joined through <b>${referrerFirstName}</b>'s referral.`
 
                 await ctx.replyWithHTML(welcomeHtml)
-                delete newUserPendingJoinRequests[member.id];
+                await redisClient.del(newMemberJoinKey)
+                // delete newUserPendingJoinRequests[member.id];
             }
             else {
                 await ctx.replyWithHTML(`🎉 Welcome to the Channel <b>${memberFullName}</b>!`)
