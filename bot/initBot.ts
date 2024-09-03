@@ -3,6 +3,7 @@ import { initCommand_start } from './commands/start';
 import { BOT_COMMANDS } from '../utils/constants';
 import { initCommand_me } from './commands/me';
 import { initCommand_referral } from './commands/referral';
+import { initCommand_leaderboard } from './commands/leaderboard';
 
 const bot = getBot()
 
@@ -27,6 +28,7 @@ const initBot = () => {
     initCommand_me(bot);
     initCommand_start(bot);
     initCommand_referral(bot);
+    initCommand_leaderboard(bot);
 
     // Start the bot
     bot.launch();
