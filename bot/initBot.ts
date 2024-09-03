@@ -4,12 +4,13 @@ import { BOT_COMMANDS } from '../utils/constants';
 import { initCommand_me } from './commands/me';
 import { initCommand_referral } from './commands/referral';
 import { initCommand_leaderboard } from './commands/leaderboard';
+import { Bot } from '../utils/definitions';
 
-const bot = getBot()
+// const bot = getBot()
 
 // TODO: add a leaderboard points system for referrals.
 
-const setCommandMenu = () => {
+const setCommandMenu = (bot: Bot) => {
     bot.telegram.setMyCommands([
         { command: BOT_COMMANDS.me, description: 'Get all information about yourself!' },
         { command: BOT_COMMANDS.start, description: 'Start interacting with the bot' },
@@ -19,10 +20,10 @@ const setCommandMenu = () => {
 }
 
 
-const initBot = () => {
+const initBot = (bot: Bot) => {
 
     // bot command menu
-    setCommandMenu();
+    setCommandMenu(bot);
 
     // init commands
     initCommand_me(bot);
@@ -31,7 +32,7 @@ const initBot = () => {
     initCommand_leaderboard(bot);
 
     // Start the bot
-    bot.launch();
+    // bot.launch();
 }
 
 export { initBot };

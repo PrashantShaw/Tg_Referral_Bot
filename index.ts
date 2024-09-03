@@ -8,12 +8,12 @@ import { PrismaClient } from '@prisma/client';
 
 const port = process.env.PORT || 3000;
 const app = express();
+const bot = getBot();
 
-const prisma = new PrismaClient()
-// const bot = getBot()
-// const webhookDomain = 'http://localhost:443/'
-let redisClient: RedisClientType;
+const prisma = new PrismaClient();
+const webhookDomain = 'https://tg-referral-bot.onrender.com/webhook';
 const REDIS_URL = process.env.REDIS_URL || '';
+let redisClient: RedisClientType;
 
 (async () => {
     redisClient = createClient({
@@ -26,14 +26,25 @@ const REDIS_URL = process.env.REDIS_URL || '';
     console.log('Redis client connected')
 })();
 
-initBot();
+(async () => {
+    const webhook = await bot.createWebhook({
+        domain: webhookDomain
+    });
+
+    app.use(webhook);
+    console.log('Tg-bot Webhook created!');
+})()
 
 app.use(express.json());
 // bot.createWebhook({ domain: webhookDomain })
-//     .then(webhook => app.use(webhook))
+//     .then(webhook => {
+//         app.use(webhook)
+//         console.log('Tg-bot Webhook created!')
+//     })
 //     .catch(error => console.error(error));
 app.use('/user', userMetaRouter)
 
+initBot(bot);
 
 app.get('/', (req, res) => {
     res.send("All Ok.")
