@@ -6,7 +6,7 @@ import { initBot } from './bot/initBot';
 import { createClient, RedisClientType } from 'redis';
 import { PrismaClient } from '@prisma/client';
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const app = express();
 
 const prisma = new PrismaClient()
