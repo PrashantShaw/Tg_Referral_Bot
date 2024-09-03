@@ -14,11 +14,11 @@ datasource db {
 }
 
 model User {
-  id         Int     @id @default(autoincrement())
-  telegramId Int     @unique
+  id         Int      @id @default(autoincrement())
+  telegramId String   @unique
+  points     Int      @default(0)
+  referrals  String[] @default([])
   firstName  String?
   lastName   String?
   username   String?
-  points     Int     @default(0)
-  referrals  Int[]
 }

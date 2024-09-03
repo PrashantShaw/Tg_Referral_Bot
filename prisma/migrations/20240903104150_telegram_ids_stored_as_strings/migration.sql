@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "telegramId" SET DATA TYPE TEXT,
+ALTER COLUMN "referrals" SET DATA TYPE TEXT[];

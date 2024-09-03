@@ -23,6 +23,7 @@ const REDIS_URL = process.env.REDIS_URL || '';
     redisClient.on("error", (error) => console.error(`Error : ${error}`));
 
     await redisClient.connect();
+    console.log('Redis client connected')
 })();
 
 initBot();

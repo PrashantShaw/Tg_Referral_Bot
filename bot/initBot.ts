@@ -16,7 +16,6 @@ const bot = getBot()
 const REFERRAL_POINTS = 5;
 type User = Prisma.$UserPayload['scalars']
 
-// TODO: In-memory storage for referral links (in production, use a database)
 // TODO: add a leaderboard points system for referrals.
 // TODO: refactor this file
 
@@ -26,6 +25,7 @@ type User = Prisma.$UserPayload['scalars']
 async function generateReferralLink(ctx: Context): Promise<string> {
     const referrer = ctx.from
     const referralLinkKey = `referral_link_${referrer?.id}`
+    // await redisClient.del(referralLinkKey)
     const prevInviteLink = await redisClient.get(referralLinkKey)
     // const prevInviteLink = userReferralLinks[referrer?.id!]
 
@@ -34,13 +34,17 @@ async function generateReferralLink(ctx: Context): Promise<string> {
     }
 
     // add the member to db if does not exist
-    const newUser = await prisma.user.create({
-        data: {
-            telegramId: referrer?.id!,
+    const newUser = await prisma.user.upsert({
+        where: {
+            telegramId: referrer?.id.toString()!,
+        },
+        create: {
+            telegramId: referrer?.id.toString()!,
             firstName: referrer?.first_name,
             lastName: referrer?.last_name,
             username: referrer?.username,
-        }
+        },
+        update: {}
     })
 
     console.log('Created new user: ', newUser)
@@ -224,14 +228,14 @@ ${referralLink}
             const [_, referrerId, referrerFirstName] = referrerStr?.split('_')
             const updateUser = await prisma.user.update({
                 where: {
-                    telegramId: Number(referrerId)
+                    telegramId: referrerId
                 },
                 data: {
                     points: {
                         increment: REFERRAL_POINTS,
                     },
                     referrals: {
-                        push: joinRequest.from.id
+                        push: joinRequest.from.id.toString()
                     }
                 }
             })

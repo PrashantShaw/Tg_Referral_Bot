@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "referrals" SET DEFAULT ARRAY[]::INTEGER[];
