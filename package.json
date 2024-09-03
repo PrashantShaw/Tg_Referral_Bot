@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node build/index.js",
     "dev": "ts-node index.ts",
-    "build": "npx prisma generate && tsc"
+    "build": "npm install && npx prisma generate && tsc"
   },
   "keywords": [],
   "author": "",
