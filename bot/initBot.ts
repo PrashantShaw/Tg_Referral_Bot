@@ -8,8 +8,6 @@ import { Bot } from '../utils/definitions';
 
 // const bot = getBot()
 
-// TODO: add a leaderboard points system for referrals.
-
 const setCommandMenu = (bot: Bot) => {
     bot.telegram.setMyCommands([
         { command: BOT_COMMANDS.me, description: 'Get all information about yourself!' },

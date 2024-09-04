@@ -6,13 +6,19 @@ import { initBot } from './bot/initBot';
 import { createClient, RedisClientType } from 'redis';
 import { PrismaClient } from '@prisma/client';
 
-const port = process.env.PORT || 3000;
+// TODO: set development environment as well
+const {
+    REDIS_URL = '',
+    NODE_ENV = 'development',
+    PORT = '3031',
+    WEBHOOK_DOMAIN_PROD = '',
+    WEBHOOK_DOMAIN_DEV = '',
+} = process.env
 const app = express();
 const bot = getBot();
 
 const prisma = new PrismaClient();
-const webhookDomain = 'https://tg-referral-bot.onrender.com/webhook';
-const REDIS_URL = process.env.REDIS_URL || '';
+const webhookDomain = NODE_ENV === 'development' ? WEBHOOK_DOMAIN_DEV : WEBHOOK_DOMAIN_PROD;
 let redisClient: RedisClientType;
 
 (async () => {
@@ -51,8 +57,8 @@ app.get('/', (req, res) => {
 })
 
 
-app.listen(port, async () => {
-    console.log('Server is running on port', port);
+app.listen(PORT, async () => {
+    console.log('Server is running on port', PORT);
 });
 
 export { app, redisClient, prisma };

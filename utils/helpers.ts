@@ -2,8 +2,14 @@ import 'dotenv/config'
 import { Context, Telegraf } from "telegraf";
 import { prisma, redisClient } from "../index"
 
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || ''
-const CHAT_ID = process.env.CHAT_ID || ''
+const {
+    CHAT_ID = '',
+    NODE_ENV = 'development',
+    TELEGRAM_BOT_TOKEN_MAIN = '',
+    TELEGRAM_BOT_TOKEN_TEST = ''
+} = process.env
+
+const TELEGRAM_BOT_TOKEN = NODE_ENV === 'development' ? TELEGRAM_BOT_TOKEN_TEST : TELEGRAM_BOT_TOKEN_MAIN
 
 export const getBot = () => {
     // Initialize the bot with your bot token
