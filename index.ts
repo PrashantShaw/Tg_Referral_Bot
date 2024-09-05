@@ -6,7 +6,8 @@ import { initBot } from './bot/initBot';
 import { createClient, RedisClientType } from 'redis';
 import { PrismaClient } from '@prisma/client';
 
-// TODO: set development environment as well
+// TODO: add karma features
+
 const {
     REDIS_URL = '',
     NODE_ENV = 'development',
@@ -14,6 +15,7 @@ const {
     WEBHOOK_DOMAIN_PROD = '',
     WEBHOOK_DOMAIN_DEV = '',
 } = process.env
+
 const app = express();
 const bot = getBot();
 
@@ -21,6 +23,7 @@ const prisma = new PrismaClient();
 const webhookDomain = NODE_ENV === 'development' ? WEBHOOK_DOMAIN_DEV : WEBHOOK_DOMAIN_PROD;
 let redisClient: RedisClientType;
 
+// setup redis client
 (async () => {
     redisClient = createClient({
         url: REDIS_URL
@@ -32,6 +35,7 @@ let redisClient: RedisClientType;
     console.log('Redis client connected')
 })();
 
+// setup webhook middleware for telegram bot
 (async () => {
     const webhook = await bot.createWebhook({
         domain: webhookDomain
@@ -42,12 +46,6 @@ let redisClient: RedisClientType;
 })()
 
 app.use(express.json());
-// bot.createWebhook({ domain: webhookDomain })
-//     .then(webhook => {
-//         app.use(webhook)
-//         console.log('Tg-bot Webhook created!')
-//     })
-//     .catch(error => console.error(error));
 app.use('/user', userMetaRouter)
 
 initBot(bot);
@@ -55,7 +53,6 @@ initBot(bot);
 app.get('/', (req, res) => {
     res.send("All Ok.")
 })
-
 
 app.listen(PORT, async () => {
     console.log('Server is running on port', PORT);

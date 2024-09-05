@@ -1,4 +1,3 @@
-import { getBot } from '../utils/helpers';
 import { initCommand_start } from './commands/start';
 import { BOT_COMMANDS } from '../utils/constants';
 import { initCommand_me } from './commands/me';
@@ -6,7 +5,6 @@ import { initCommand_referral } from './commands/referral';
 import { initCommand_leaderboard } from './commands/leaderboard';
 import { Bot } from '../utils/definitions';
 
-// const bot = getBot()
 
 const setCommandMenu = (bot: Bot) => {
     bot.telegram.setMyCommands([
@@ -16,7 +14,6 @@ const setCommandMenu = (bot: Bot) => {
         { command: BOT_COMMANDS.leaderboard, description: 'Check Top 10 of the leaderboard' },
     ]);
 }
-
 
 const initBot = (bot: Bot) => {
 
