@@ -6,7 +6,7 @@ import { initBot } from "./bot/initBot";
 // import { createClient, RedisClientType } from "redis";
 // import { PrismaClient } from "@prisma/client";
 
-// TODO: add karma features
+// TODO: create a new bot with proper bot username, add dp to the tg bot
 
 const {
   REDIS_URL = "",

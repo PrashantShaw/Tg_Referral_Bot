@@ -53,6 +53,23 @@ const setCommandMenu = (bot: Bot) => {
       command: BOT_COMMANDS.whitepaper,
       description: "Read complete Validum whitepaper.",
     },
+
+    {
+      command: BOT_COMMANDS.tweeter,
+      description: "Our X · tweeter handle",
+    },
+    {
+      command: BOT_COMMANDS.linkedin,
+      description: "Our LinkedIn Page",
+    },
+    {
+      command: BOT_COMMANDS.youtube,
+      description: "Our Youtube Channel",
+    },
+    {
+      command: BOT_COMMANDS.pitch_deck,
+      description: "See our Pitch Deck",
+    },
   ]);
 };
 

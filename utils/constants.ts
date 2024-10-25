@@ -6,13 +6,17 @@ export const VALIDIUM_LINKS = {
   documentations: "https://validium.gitbook.io/docs",
   blog: "https://medium.com/@validium",
   whitePaper: "https://docsend.com/view/5c85m6dfy3v4rren",
+  tweeter: "https://x.com/validiumnetwork",
+  linkedin: "https://www.linkedin.com/company/validiumnetwork/",
+  youtube: "https://www.youtube.com/@ValidiumNetwork",
+  pitchDeck: "https://docsend.com/view/rwm4yirjma6xkv59",
 };
 
 export const BOT_COMMANDS = {
-  me: "me",
-  start: "start",
-  referral: "referral",
-  leaderboard: "leaderboard",
+  //   me: "me",
+  //   start: "start",
+  //   referral: "referral",
+  //   leaderboard: "leaderboard",
   network: "network",
   faucet: "faucet",
   developers: "developers",
@@ -20,6 +24,10 @@ export const BOT_COMMANDS = {
   connect_to_validium: "connect_to_validium",
   blog: "blog",
   whitepaper: "whitepaper",
+  tweeter: "tweeter",
+  linkedin: "linkedin",
+  youtube: "youtube",
+  pitch_deck: "pitch_deck",
 };
 
 export const POINTS = {
@@ -35,4 +43,8 @@ export const COMMAND_BANNERS = {
   documentations: "./images/validium-banner.png",
   blog: "./images/validium-banner.png",
   whitePaper: "./images/validium-banner.png",
+  tweeter: "./images/validium-banner.png",
+  linkedin: "./images/validium-banner.png",
+  youtube: "./images/validium-banner.png",
+  pitchDeck: "./images/validium-banner.png",
 };

@@ -153,4 +153,88 @@ Let’s build the future together!`.trim();
       }
     );
   });
+  bot.command(BOT_COMMANDS.tweeter, async (ctx) => {
+    const imageSource = COMMAND_BANNERS.tweeter;
+    const imageCaption = `
+<b>👋 Hello ${ctx.from.first_name}</b>
+<b>Thanks for using me!</b>
+
+🔗 Our X · tweeter handle:
+<a href="${VALIDIUM_LINKS.tweeter}">${VALIDIUM_LINKS.tweeter}</a>
+
+Let’s build the future together!`.trim();
+
+    ctx.replyWithPhoto(
+      {
+        source: imageSource,
+      },
+      {
+        caption: imageCaption,
+        parse_mode: "HTML",
+      }
+    );
+  });
+  bot.command(BOT_COMMANDS.linkedin, async (ctx) => {
+    const imageSource = COMMAND_BANNERS.linkedin;
+    const imageCaption = `
+<b>👋 Hello ${ctx.from.first_name}</b>
+<b>Thanks for using me!</b>
+
+🔗 Our LinkedIn Page:
+<a href="${VALIDIUM_LINKS.linkedin}">${VALIDIUM_LINKS.linkedin}</a>
+
+Let’s build the future together!`.trim();
+
+    ctx.replyWithPhoto(
+      {
+        source: imageSource,
+      },
+      {
+        caption: imageCaption,
+        parse_mode: "HTML",
+      }
+    );
+  });
+  bot.command(BOT_COMMANDS.youtube, async (ctx) => {
+    const imageSource = COMMAND_BANNERS.youtube;
+    const imageCaption = `
+<b>👋 Hello ${ctx.from.first_name}</b>
+<b>Thanks for using me!</b>
+
+🔗 Our Youtube Channel:
+<a href="${VALIDIUM_LINKS.youtube}">${VALIDIUM_LINKS.youtube}</a>
+
+Let’s build the future together!`.trim();
+
+    ctx.replyWithPhoto(
+      {
+        source: imageSource,
+      },
+      {
+        caption: imageCaption,
+        parse_mode: "HTML",
+      }
+    );
+  });
+  bot.command(BOT_COMMANDS.pitch_deck, async (ctx) => {
+    const imageSource = COMMAND_BANNERS.pitchDeck;
+    const imageCaption = `
+<b>👋 Hello ${ctx.from.first_name}</b>
+<b>Thanks for using me!</b>
+
+🔗 See our Pitch Deck:
+<a href="${VALIDIUM_LINKS.pitchDeck}">${VALIDIUM_LINKS.pitchDeck}</a>
+
+Let’s build the future together!`.trim();
+
+    ctx.replyWithPhoto(
+      {
+        source: imageSource,
+      },
+      {
+        caption: imageCaption,
+        parse_mode: "HTML",
+      }
+    );
+  });
 };
